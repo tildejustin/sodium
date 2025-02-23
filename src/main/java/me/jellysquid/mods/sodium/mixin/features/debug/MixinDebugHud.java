@@ -22,6 +22,7 @@ public abstract class MixinDebugHud {
 
     @ModifyExpressionValue(method = "getRightText", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlDebugInfo;getCpuInfo()Ljava/lang/String;"))
     private String shortenCPUInfo(String text) {
+//        text = "24x AMD Ryzen 9 5900X 12-Core Processor ";
         if (cpuNameCache != null) {
             return cpuNameCache;
         }
