@@ -34,6 +34,7 @@ sourceSets.apply {
 
 repositories {
     mavenLocal()
+    flatDir { dirs("../libs") }
 }
 
 dependencies {
@@ -60,6 +61,7 @@ dependencies {
     addEmbeddedFabricModule("fabric-renderer-api-v1")
     addEmbeddedFabricModule("fabric-rendering-data-attachment-v1")
     addEmbeddedFabricModule("fabric-rendering-fluids-v1")
+    include("","temporal-stability")
 }
 
 loom {
