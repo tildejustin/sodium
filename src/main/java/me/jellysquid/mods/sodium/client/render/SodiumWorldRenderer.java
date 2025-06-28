@@ -10,6 +10,7 @@ import me.jellysquid.mods.sodium.client.gl.device.RenderDevice;
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
 import me.jellysquid.mods.sodium.client.model.vertex.type.ChunkVertexType;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderBackend;
+import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderManager;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.multidraw.MultidrawChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.oneshot.ChunkRenderBackendOneshot;
@@ -48,7 +49,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     private int renderDistance;
 
     private double lastCameraX, lastCameraY, lastCameraZ;
-    private double lastCameraPitch, lastCameraYaw;
+    private double lastCameraPitch, lastCameraYaw, lastFov;
 
     private boolean useEntityCulling;
 
@@ -165,9 +166,10 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         Vec3d pos = camera.getPos();
         float pitch = camera.getPitch();
         float yaw = camera.getYaw();
+        double fov = client.options.fov;
 
         boolean dirty = pos.x != this.lastCameraX || pos.y != this.lastCameraY || pos.z != this.lastCameraZ ||
-                pitch != this.lastCameraPitch || yaw != this.lastCameraYaw;
+                pitch != this.lastCameraPitch || yaw != this.lastCameraYaw || fov != this.lastFov;
 
         if (dirty) {
             this.chunkRenderManager.markDirty();
@@ -178,6 +180,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         this.lastCameraZ = pos.z;
         this.lastCameraPitch = pitch;
         this.lastCameraYaw = yaw;
+        this.lastFov = fov;
 
         this.chunkRenderManager.unloadPending();
 
@@ -339,7 +342,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
      * @return True if the entity is visible, otherwise false
      */
     public boolean isEntityVisible(Entity entity) {
-        if (!this.useEntityCulling) {
+        if (!this.getUseEntityCulling()) {
             return true;
         }
 
@@ -422,5 +425,10 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
     public int getRenderDistance() {
         return this.renderDistance;
+    }
+
+    public boolean hasRenderData(int chunkX, int chunkY, int chunkZ) {
+        ChunkRenderContainer<?> chunkRenderData = this.chunkRenderManager.getRender(chunkX, chunkY, chunkZ);
+        return chunkRenderData != null && chunkRenderData.getData() != ChunkRenderData.ABSENT;
     }
 }

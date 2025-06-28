@@ -3,6 +3,7 @@ package me.jellysquid.mods.sodium.mixin.features.entity.smooth_lighting;
 import me.jellysquid.mods.sodium.client.model.light.EntityLighter;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.render.entity.EntityLightSampler;
+import me.jellysquid.mods.sodium.client.render.entity.EntityRendererHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.AoOption;
 import net.minecraft.client.render.Frustum;
@@ -35,7 +36,9 @@ public abstract class MixinEntityRenderer<T extends Entity> implements EntityLig
     private void preShouldRender(T entity, Frustum frustum, double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
         // If the entity isn't culled already by other means, try to perform a second pass
         if (cir.getReturnValue() && !SodiumWorldRenderer.getInstance().isEntityVisible(entity)) {
-//            MinecraftClient.getInstance().worldRenderer.regularEntityCount++;
+            if (!EntityRendererHelper.shownIfCulled(entity)) {
+                MinecraftClient.getInstance().worldRenderer.regularEntityCount++;
+            }
             cir.setReturnValue(false);
         }
     }
