@@ -3,7 +3,7 @@ plugins {
     id "maven-publish"
 }
 
-version = "$mod_version+$target_version"
+version = "$mod_version+$target_version-xray-fix"
 group = maven_group
 
 base {
