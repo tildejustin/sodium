@@ -107,7 +107,7 @@ public class GlProgram<T> extends GlObject implements ShaderBindingContext {
                 LOGGER.warn("Program link log for " + this.name + ": " + log);
             }
 
-            int result = GlStateManager.glGetProgrami(this.program, GL20C.GL_LINK_STATUS);
+            int result = GlStateManager.getProgram(this.program, GL20C.GL_LINK_STATUS);
 
             if (result != GL20C.GL_TRUE) {
                 throw new RuntimeException("Shader program linking failed, see log for details");

@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import me.jellysquid.mods.sodium.client.world.ChunkStatusListener;
 import me.jellysquid.mods.sodium.client.world.ClientChunkManagerExtended;
 import net.minecraft.client.world.ClientChunkManager;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,7 +37,7 @@ public abstract class MixinClientChunkManager implements ClientChunkManagerExten
     private ChunkStatusListener listener;
 
     @Inject(method = "loadChunkFromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;resetChunkColor(Lnet/minecraft/util/math/ChunkPos;)V", shift = At.Shift.AFTER))
-    private void afterLoadChunkFromPacket(int x, int z, BiomeArray biomes, PacketByteBuf buf, NbtCompound nbt, BitSet bitSet, CallbackInfoReturnable<WorldChunk> cir) {
+    private void afterLoadChunkFromPacket(int x, int z, BiomeArray biomes, PacketByteBuf buf, CompoundTag tag, BitSet bitSet, CallbackInfoReturnable<WorldChunk> cir) {
         if (this.listener != null && this.loadedChunks.add(ChunkPos.toLong(x, z))) {
             this.listener.onChunkAdded(x, z);
         }

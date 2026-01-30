@@ -34,30 +34,30 @@ public class MixinSpriteInterpolated {
      * @reason Drastic optimizations
      */
     @Overwrite
-    void apply(Sprite.Animation animation) {
-        Sprite.AnimationFrame animationFrame = animation.frames.get(animation.frameIndex);
+    void apply(Sprite.class_5790 animation) {
+        Sprite.class_5791 animationFrame = animation.field_28472.get(animation.field_28470);
 
-        int curIndex = animationFrame.index;
-        int nextIndex = animation.frames.get((animation.frameIndex + 1) % animation.frames.size()).index;
+        int curIndex = animationFrame.field_28475;
+        int nextIndex = animation.field_28472.get((animation.field_28470 + 1) % animation.field_28472.size()).index;
 
         if (curIndex == nextIndex) {
             return;
         }
 
-        float delta = 1.0F - (float) animation.frameTicks / (float) animationFrame.time;
+        float delta = 1.0F - (float) animation.field_28471 / (float) animationFrame.field_28476;
 
         int f1 = ColorMixer.getStartRatio(delta);
         int f2 = ColorMixer.getEndRatio(delta);
 
         for (int layer = 0; layer < this.images.length; layer++) {
-            int width = this.parent.width >> layer;
-            int height = this.parent.height >> layer;
+            int width = this.parent.getWidth() >> layer;
+            int height = this.parent.getHeight() >> layer;
 
-            int curX = ((curIndex % animation.frameCount) * width);
-            int curY = ((curIndex / animation.frameCount) * height);
+            int curX = ((curIndex % animation.field_28473) * width);
+            int curY = ((curIndex / animation.field_28473) * height);
 
-            int nextX = ((nextIndex % animation.frameCount) * width);
-            int nextY = ((nextIndex / animation.frameCount) * height);
+            int nextX = ((nextIndex % animation.field_28473) * width);
+            int nextY = ((nextIndex / animation.field_28473) * height);
 
             NativeImage src = this.parent.images[layer];
             NativeImage dst = this.images[layer];

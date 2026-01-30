@@ -93,7 +93,7 @@ public class WorldSlice implements BlockRenderView, BiomeAccess.Storage, RenderA
 
     public static ChunkRenderContext prepare(World world, ChunkSectionPos origin, ClonedChunkSectionCache sectionCache) {
         WorldChunk chunk = world.getChunk(origin.getX(), origin.getZ());
-        ChunkSection section = chunk.getSectionArray()[world.sectionCoordToIndex(origin.getY())];
+        ChunkSection section = chunk.getSectionArray()[origin.getY()];
 
         // If the chunk section is absent or empty, simply terminate now. There will never be anything in this chunk
         // section to render, so we need to signal that a chunk render task shouldn't created. This saves a considerable
@@ -191,14 +191,14 @@ public class WorldSlice implements BlockRenderView, BiomeAccess.Storage, RenderA
 
         ChunkSectionPos pos = section.getPosition();
 
-        int minBlockX = Math.max(box.getMinX(), pos.getMinX());
-        int maxBlockX = Math.min(box.getMaxX(), pos.getMaxX());
+        int minBlockX = Math.max(box.minX, pos.getMinX());
+        int maxBlockX = Math.min(box.maxX, pos.getMaxX());
 
-        int minBlockY = Math.max(box.getMinY(), pos.getMinY());
-        int maxBlockY = Math.min(box.getMaxY(), pos.getMaxY());
+        int minBlockY = Math.max(box.minY, pos.getMinY());
+        int maxBlockY = Math.min(box.maxY, pos.getMaxY());
 
-        int minBlockZ = Math.max(box.getMinZ(), pos.getMinZ());
-        int maxBlockZ = Math.min(box.getMaxZ(), pos.getMaxZ());
+        int minBlockZ = Math.max(box.minZ, pos.getMinZ());
+        int maxBlockZ = Math.min(box.maxZ, pos.getMaxZ());
 
         for (int y = minBlockY; y <= maxBlockY; y++) {
             for (int z = minBlockZ; z <= maxBlockZ; z++) {
@@ -347,16 +347,6 @@ public class WorldSlice implements BlockRenderView, BiomeAccess.Storage, RenderA
     }
 
     @Override
-    public int getHeight() {
-        return this.world.getHeight();
-    }
-
-    @Override
-    public int getBottomY() {
-        return this.world.getBottomY();
-    }
-
-    @Override
     public @Nullable Object getBlockEntityRenderAttachment(BlockPos pos) {
         int relX = pos.getX() - this.baseX;
         int relY = pos.getY() - this.baseY;
@@ -364,5 +354,15 @@ public class WorldSlice implements BlockRenderView, BiomeAccess.Storage, RenderA
 
         return this.sections[WorldSlice.getLocalSectionIndex(relX >> 4, relY >> 4, relZ >> 4)]
                 .getBlockEntityRenderAttachment(relX & 15, relY & 15, relZ & 15);
+    }
+
+    @Override
+    public int getSectionCount() {
+        return this.world.getSectionCount();
+    }
+
+    @Override
+    public int getBottomSectionLimit() {
+        return this.world.getBottomSectionLimit();
     }
 }

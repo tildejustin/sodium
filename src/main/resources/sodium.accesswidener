@@ -3,24 +3,22 @@ accessWidener v1 named
 accessible class net/minecraft/client/model/ModelPart$Vertex
 accessible class net/minecraft/client/model/ModelPart$Quad
 accessible class net/minecraft/client/texture/Sprite$Interpolation
-accessible class net/minecraft/client/world/ClientWorld$BlockParticle
-accessible class net/minecraft/client/texture/Sprite$Animation
 
-accessible method net/minecraft/client/texture/Sprite$Interpolation apply ()V
+accessible method net/minecraft/client/texture/Sprite$Interpolation apply (Lnet/minecraft/class_1058$class_5790;)V
 accessible method net/minecraft/client/render/Frustum isVisible (DDDDDD)Z
-
-accessible field net/minecraft/client/option/CyclingOption setter Lnet/minecraft/client/option/CyclingOption$Setter;
+accessible field net/minecraft/client/option/CyclingOption setter Lnet/minecraft/client/option/CyclingOption$class_5675;
 accessible field net/minecraft/client/option/CyclingOption getter Ljava/util/function/Function;
 
-accessible class net/minecraft/client/texture/Sprite$AnimationFrame
-accessible field net/minecraft/client/texture/Sprite$AnimationFrame index I
-accessible field net/minecraft/client/texture/Sprite$AnimationFrame time I
-accessible field net/minecraft/client/texture/Sprite$Animation frameIndex I
-accessible field net/minecraft/client/texture/Sprite$Animation frameTicks I
-accessible field net/minecraft/client/texture/Sprite$Animation frames Ljava/util/List;
-accessible field net/minecraft/client/texture/Sprite$Animation frameCount I
-accessible field net/minecraft/client/texture/Sprite width I
-accessible field net/minecraft/client/texture/Sprite height I
+accessible class net/minecraft/client/texture/Sprite$class_5790
+accessible class net/minecraft/client/texture/Sprite$class_5791
+
+accessible field net/minecraft/client/texture/Sprite$class_5790 field_28472 Ljava/util/List;
+accessible field net/minecraft/client/texture/Sprite$class_5790 field_28470 I
+accessible field net/minecraft/client/texture/Sprite$class_5790 field_28471 I
+accessible field net/minecraft/client/texture/Sprite$class_5791 field_28476 I
+accessible field net/minecraft/client/texture/Sprite$class_5790 field_28473 I
+accessible field net/minecraft/client/texture/Sprite$class_5791 field_28475 I
 accessible field net/minecraft/client/texture/Sprite images [Lnet/minecraft/client/texture/NativeImage;
-accessible method net/minecraft/client/texture/Sprite upload (II[Lnet/minecraft/client/texture/NativeImage;)V
 accessible field net/minecraft/client/texture/NativeImage pointer J
+accessible field net/minecraft/client/texture/Sprite field_28468 Lnet/minecraft/client/texture/Sprite$class_5790;
+accessible method net/minecraft/client/texture/Sprite upload (II[Lnet/minecraft/client/texture/NativeImage;)V

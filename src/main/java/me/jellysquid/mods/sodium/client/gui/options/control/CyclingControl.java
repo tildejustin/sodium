@@ -91,8 +91,8 @@ public class CyclingControl<T extends Enum<T>> implements Control<T> {
             Enum<T> value = this.option.getValue();
             Text name = this.names[value.ordinal()];
 
-            int strWidth = this.getStringWidth(name);
-            this.drawString(matrixStack, name, this.dim.getLimitX() - strWidth - 6, this.dim.getCenterY() - 4, 0xFFFFFFFF);
+            int strWidth = this.getStringWidth(name.asString());
+            this.drawString(matrixStack, name.asString(), this.dim.getLimitX() - strWidth - 6, this.dim.getCenterY() - 4, 0xFFFFFFFF);
         }
 
         @Override

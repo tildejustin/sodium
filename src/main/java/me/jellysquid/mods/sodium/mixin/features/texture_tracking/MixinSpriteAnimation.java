@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(Sprite.Animation.class)
+@Mixin(Sprite.class_5790.class)
 public class MixinSpriteAnimation {
     @Unique
     private Sprite parent;

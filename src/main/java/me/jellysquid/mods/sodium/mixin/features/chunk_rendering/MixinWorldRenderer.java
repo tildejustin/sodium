@@ -90,7 +90,7 @@ public abstract class MixinWorldRenderer implements WorldRendererExtended {
      * @author JellySquid
      */
     @Overwrite
-    private void renderLayer(RenderLayer renderLayer, MatrixStack matrices, double x, double y, double z, Matrix4f matrix) {
+    private void renderLayer(RenderLayer renderLayer, MatrixStack matrices, double x, double y, double z) {
         RenderDevice.enterManagedCode();
 
         try {

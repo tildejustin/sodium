@@ -8,11 +8,14 @@ import me.jellysquid.mods.sodium.client.gui.options.storage.OptionStorage;
 import me.jellysquid.mods.sodium.client.gui.widgets.FlatButtonWidget;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.VideoOptionsScreen;
+import net.minecraft.client.gui.screen.VideoOptionsScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Language;
@@ -30,6 +33,7 @@ public class SodiumOptionsGUI extends Screen {
     private final List<OptionPage> pages = new ArrayList<>();
 
     private final List<ControlElement<?>> controls = new ArrayList<>();
+    private final List<Drawable> drawable = new ArrayList<>();
 
     private final Screen prevScreen;
 
@@ -48,7 +52,6 @@ public class SodiumOptionsGUI extends Screen {
 
         this.pages.add(SodiumGameOptionPages.general());
         this.pages.add(SodiumGameOptionPages.quality());
-        this.pages.add(SodiumGameOptionPages.performance());
         this.pages.add(SodiumGameOptionPages.advanced());
     }
 
@@ -67,8 +70,8 @@ public class SodiumOptionsGUI extends Screen {
 
     private void rebuildGUI() {
         this.controls.clear();
-
-        this.clearChildren();
+        this.children.clear();
+        this.drawable.clear();
 
         if (this.currentPage == null) {
             if (this.pages.isEmpty()) {
@@ -82,21 +85,27 @@ public class SodiumOptionsGUI extends Screen {
         this.rebuildGUIPages();
         this.rebuildGUIOptions();
 
-        this.undoButton = new FlatButtonWidget(new Dim2i(this.width - 211, this.height - 30, 65, 20), new TranslatableText("sodium.options.buttons.undo"), this::undoChanges);
-        this.applyButton = new FlatButtonWidget(new Dim2i(this.width - 142, this.height - 30, 65, 20), new TranslatableText("sodium.options.buttons.apply"), this::applyChanges);
-        this.closeButton = new FlatButtonWidget(new Dim2i(this.width - 73, this.height - 30, 65, 20), new TranslatableText("gui.done"), this::onClose);
-        this.donateButton = new FlatButtonWidget(new Dim2i(this.width - 128, 6, 100, 20), new TranslatableText("sodium.options.buttons.donate"), this::openDonationPage);
-        this.hideDonateButton = new FlatButtonWidget(new Dim2i(this.width - 26, 6, 20, 20), new LiteralText("x"), this::hideDonationButton);
+        this.undoButton = new FlatButtonWidget(new Dim2i(this.width - 211, this.height - 26, 65, 20), Text.of("Undo"), this::undoChanges);
+        this.applyButton = new FlatButtonWidget(new Dim2i(this.width - 142, this.height - 26, 65, 20), Text.of("Apply"), this::applyChanges);
+        this.closeButton = new FlatButtonWidget(new Dim2i(this.width - 73, this.height - 26, 65, 20), Text.of("Close"), this::onClose);
+        this.donateButton = new FlatButtonWidget(new Dim2i(this.width - 128, 6, 100, 20), Text.of("Buy us a coffee!"), this::openDonationPage);
+        this.hideDonateButton = new FlatButtonWidget(new Dim2i(this.width - 26, 6, 20, 20), Text.of("x"), this::hideDonationButton);
 
         if (SodiumClientMod.options().notifications.hideDonationButton) {
             this.setDonationButtonVisibility(false);
         }
 
-        this.addDrawableChild(this.undoButton);
-        this.addDrawableChild(this.applyButton);
-        this.addDrawableChild(this.closeButton);
-        this.addDrawableChild(this.donateButton);
-        this.addDrawableChild(this.hideDonateButton);
+        this.children.add(this.undoButton);
+        this.children.add(this.applyButton);
+        this.children.add(this.closeButton);
+        this.children.add(this.donateButton);
+        this.children.add(this.hideDonateButton);
+
+        for (Element element : this.children) {
+            if (element instanceof Drawable) {
+                this.drawable.add((Drawable) element);
+            }
+        }
     }
 
     private void setDonationButtonVisibility(boolean value) {
@@ -129,7 +138,7 @@ public class SodiumOptionsGUI extends Screen {
 
             x += width + 6;
 
-            this.addDrawableChild(button);
+            this.children.add(button);
         }
     }
 
@@ -143,9 +152,8 @@ public class SodiumOptionsGUI extends Screen {
                 Control<?> control = option.getControl();
                 ControlElement<?> element = control.createElement(new Dim2i(x, y, 200, 18));
 
-                this.addDrawableChild(element);
-
                 this.controls.add(element);
+                this.children.add(element);
 
                 // Move down to the next option
                 y += 18;
@@ -162,7 +170,9 @@ public class SodiumOptionsGUI extends Screen {
 
         this.updateControls();
 
-        super.render(matrixStack, mouseX, mouseY, delta);
+        for (Drawable drawable : this.drawable) {
+            drawable.render(matrixStack, mouseX, mouseY, delta);
+        }
 
         if (this.hoveredElement != null) {
             this.renderOptionTooltip(matrixStack, this.hoveredElement);
@@ -220,7 +230,7 @@ public class SodiumOptionsGUI extends Screen {
         OptionImpact impact = option.getImpact();
 
         if (impact != null) {
-            tooltip.add(Language.getInstance().reorder(new TranslatableText("sodium.options.performance_impact_string", impact.getLocalizedName()).formatted(Formatting.GRAY)));
+            tooltip.add(Language.getInstance().reorder(new LiteralText(Formatting.GRAY + "Performance Impact: " + impact.getLocalizedName())));
         }
 
         int boxHeight = (tooltip.size() * 12) + boxPadding;
@@ -258,8 +268,6 @@ public class SodiumOptionsGUI extends Screen {
 
         if (flags.contains(OptionFlag.REQUIRES_RENDERER_RELOAD)) {
             client.worldRenderer.reload();
-        } else if (flags.contains(OptionFlag.REQUIRES_RENDERER_UPDATE)) {
-            client.worldRenderer.scheduleTerrainUpdate();
         }
 
         if (flags.contains(OptionFlag.REQUIRES_ASSET_RELOAD)) {

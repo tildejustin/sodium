@@ -1,11 +1,13 @@
 package me.jellysquid.mods.sodium.client.model.vertex.formats.line;
 
+import com.google.common.collect.ImmutableList;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexSink;
 import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormatElement;
 import net.minecraft.client.render.VertexFormats;
 
 public interface LineVertexSink extends VertexSink {
-    VertexFormat VERTEX_FORMAT = VertexFormats.LINES;
+    VertexFormat VERTEX_FORMAT = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(VertexFormats.POSITION_ELEMENT).add(VertexFormats.COLOR_ELEMENT).add(VertexFormats.NORMAL_ELEMENT).add(VertexFormats.PADDING_ELEMENT).build());
 
     /**
      * Writes a line vertex to the sink.
