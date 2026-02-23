@@ -183,15 +183,15 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
         this.chunkRenderManager.unloadPending();
 
-        profiler.swap("chunk_update");
-
-        this.chunkRenderManager.updateChunks();
-
         if (!hasForcedFrustum && this.chunkRenderManager.isDirty()) {
             profiler.swap("chunk_graph_rebuild");
 
             this.chunkRenderManager.update(camera, (FrustumExtended) frustum, frame, spectator);
         }
+
+        profiler.swap("chunk_update");
+
+        this.chunkRenderManager.updateChunks();
 
         profiler.swap("visible_chunk_tick");
 

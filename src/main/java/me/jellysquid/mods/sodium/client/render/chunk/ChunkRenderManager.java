@@ -49,7 +49,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     /**
      * The maximum distance a chunk can be from the player's camera in order to be eligible for blocking updates.
      */
-    private static final double NEARBY_CHUNK_DISTANCE = Math.pow(48, 2.0);
+    private static final double NEARBY_CHUNK_DISTANCE = 768;
 
     /**
      * The minimum distance the culling plane can be from the player's camera. This helps to prevent mathematical
@@ -399,7 +399,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         if (ChunkSection.isEmpty(this.world.getChunk(x, z).getSectionArray()[y])) {
             render.setData(ChunkRenderData.EMPTY);
         } else {
-            render.scheduleRebuild(false);
+            render.scheduleRebuild(this.isChunkPrioritized(render));
         }
 
         render.setId(this.renders.add(render));
@@ -433,6 +433,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
 
     public void updateChunks() {
         Deque<CompletableFuture<ChunkBuildResult<T>>> futures = new ArrayDeque<>();
+        Deque<ChunkRenderContainer<T>> containers = new ArrayDeque<>();
 
         int budget = this.builder.getSchedulingBudget();
         int submitted = 0;
@@ -445,6 +446,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
                 this.builder.deferRebuild(render);
             } else {
                 futures.add(this.builder.scheduleRebuildTaskAsync(render));
+                containers.add(render);
             }
 
             this.dirty = true;
@@ -467,6 +469,14 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
             this.backend.upload(RenderDevice.INSTANCE.createCommandList(), new FutureDequeDrain<>(futures));
         }
 
+        while (!containers.isEmpty()) {
+            ChunkRenderContainer<T> render = containers.poll();
+            if (!render.isEmpty()) {
+                this.addChunkToRenderLists(render);
+                this.addEntitiesToRenderLists(render);
+            }
+        }
+
         this.builder.createMoreThreads();
     }
 
@@ -479,6 +489,9 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     }
 
     public void restoreChunks(LongCollection chunks) {
+        // set cameraXYZ so chunks can be properly prioritized in rebuild scheduling
+        this.setup(MinecraftClient.getInstance().gameRenderer.getCamera());
+
         LongIterator it = chunks.iterator();
 
         while (it.hasNext()) {
