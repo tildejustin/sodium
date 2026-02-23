@@ -49,7 +49,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     /**
      * The maximum distance a chunk can be from the player's camera in order to be eligible for blocking updates.
      */
-    private static final double NEARBY_CHUNK_DISTANCE = 768;
+    private static final double NEARBY_CHUNK_DISTANCE;
 
     /**
      * The minimum distance the culling plane can be from the player's camera. This helps to prevent mathematical
@@ -96,6 +96,10 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     private boolean useFogCulling;
     private boolean usePlanarFog;
     private double fogRenderCutoff;
+
+    static {
+        NEARBY_CHUNK_DISTANCE = 768; // must not inline because of mixin in seedqueue
+    }
 
     public ChunkRenderManager(SodiumWorldRenderer renderer, ChunkRenderBackend<T> backend, BlockRenderPassManager renderPassManager, ClientWorld world, int renderDistance) {
         this.backend = backend;
