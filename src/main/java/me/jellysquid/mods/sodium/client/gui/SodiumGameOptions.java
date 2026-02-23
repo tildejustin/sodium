@@ -46,8 +46,8 @@ public class SodiumGameOptions implements SpeedrunConfig {
 
     public static class SpeedrunSettings implements SpeedrunConfigStorage {
         public boolean usePlanarFog = true;
-        public boolean showEntityCulling = true;
-        public boolean showFogOcclusion = true;
+        public boolean showEntityCulling = false;
+        public boolean showFogOcclusion = false;
     }
 
     {
