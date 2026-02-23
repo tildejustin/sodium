@@ -3,7 +3,7 @@
     "speedrunapi.config.sodium.category.advanced": "Advanced",
     "speedrunapi.config.sodium.category.speedrun": "Speedrun",
     "speedrunapi.config.sodium.option.quality:enableVignette": "Vignette",
-    "speedrunapi.config.sodium.option.quality:enableVignette.description": "If enabled, a vignette effect will be rendered on the player's view. This is very unlikely to make a difference to frame rates unless you are fill-rate limited.",
+    "speedrunapi.config.sodium.option.quality:enableVignette.description": "If disabled, the vignette effect will not be rendered on Fancy graphics. This is very unlikely to make a difference to frame rates unless you are fill-rate limited.",
     "speedrunapi.config.sodium.option.advanced:initialChunkThreads": "Initial Chunk Threads",
     "speedrunapi.config.sodium.option.advanced:initialChunkThreads.description": "How many chunk building threads to create instantly when reloading (lower = less F3 + F lag). Cannot be more than Target Chunk Threads.",
     "speedrunapi.config.sodium.option.advanced:initialChunkThreads.value.0": "Auto",
