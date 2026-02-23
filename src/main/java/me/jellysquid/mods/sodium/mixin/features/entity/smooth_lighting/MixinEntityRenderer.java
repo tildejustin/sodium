@@ -1,8 +1,10 @@
 package me.jellysquid.mods.sodium.mixin.features.entity.smooth_lighting;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import me.jellysquid.mods.sodium.client.model.light.EntityLighter;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.render.entity.EntityLightSampler;
+import me.jellysquid.mods.sodium.mixin.features.entity.smooth_lighting.accessor.WorldRendererAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.AoOption;
 import net.minecraft.client.render.Frustum;
@@ -31,13 +33,15 @@ public abstract class MixinEntityRenderer<T extends Entity> implements EntityLig
         }
     }
 
-    @Inject(method = "shouldRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Frustum;isVisible(Lnet/minecraft/util/math/Box;)Z", shift = At.Shift.AFTER), cancellable = true)
-    private void preShouldRender(T entity, Frustum frustum, double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
+    @ModifyExpressionValue(method = "shouldRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Frustum;isVisible(Lnet/minecraft/util/math/Box;)Z"))
+    private boolean preShouldRender(boolean original, T entity, Frustum frustum, double x, double y, double z) {
         // If the entity isn't culled already by other means, try to perform a second pass
-        if (cir.getReturnValue() && !SodiumWorldRenderer.getInstance().isEntityVisible(entity)) {
-//            MinecraftClient.getInstance().worldRenderer.regularEntityCount++;
-            cir.setReturnValue(false);
+        if (original && !SodiumWorldRenderer.getInstance().isEntityVisible(entity)) {
+            WorldRendererAccessor wra = ((WorldRendererAccessor) MinecraftClient.getInstance().worldRenderer);
+            wra.setRegularEntityCount(wra.getRegularEntityCount() + 1);
+            return false;
         }
+        return original;
     }
 
     @Override

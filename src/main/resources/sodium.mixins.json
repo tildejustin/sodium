@@ -42,6 +42,7 @@
         "features.entity.smooth_lighting.MixinEntityRenderer",
         "features.entity.smooth_lighting.MixinPaintingEntityRenderer",
         "features.entity.smooth_lighting.MixinWorldRenderer",
+        "features.entity.smooth_lighting.accessor.WorldRendererAccessor",
         "features.gui.MixinDebugHud",
         "features.gui.fast_loading_screen.MixinLevelLoadingScreen",
         "features.gui.font.MixinGlyphRenderer",
