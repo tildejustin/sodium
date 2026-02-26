@@ -164,9 +164,12 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     }
 
     private void addChunk(ChunkRenderContainer<T> render) {
+        boolean enqueued = false;
         if (render.needsRebuild() && render.canRebuild()) {
             if (render.needsImportantRebuild()) {
                 this.importantRebuildQueue.enqueue(render);
+                // important rebuilds are uploaded shortly after in updateChunks, uploading them now leads to blinking
+                enqueued = true;
             } else {
                 this.rebuildQueue.enqueue(render);
             }
@@ -182,7 +185,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
             }
         }
 
-        if (!render.isEmpty()) {
+        if (!render.isEmpty() && !enqueued) {
             this.addChunkToRenderLists(render);
             this.addEntitiesToRenderLists(render);
         }
