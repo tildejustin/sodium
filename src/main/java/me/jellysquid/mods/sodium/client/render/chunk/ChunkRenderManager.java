@@ -439,10 +439,28 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     }
 
     public void updateChunks() {
+        int budget = this.builder.getSchedulingBudget();
+        int submitted = 0;
+
+        while (submitted < budget && !this.rebuildQueue.isEmpty()) {
+            ChunkRenderContainer<T> render = this.rebuildQueue.dequeue();
+
+            this.builder.deferRebuild(render);
+            submitted++;
+        }
+
+        this.dirty |= submitted > 0;
+
+        // have to do some uploads here to stop flashing issues?
+        this.dirty |= this.builder.performPendingUploads();
+
+        this.builder.createMoreThreads();
+    }
+
+    public void updateImportantChunks() {
         Deque<CompletableFuture<ChunkBuildResult<T>>> futures = new ArrayDeque<>();
         Deque<ChunkRenderContainer<T>> containers = new ArrayDeque<>();
 
-        int budget = this.builder.getSchedulingBudget();
         int submitted = 0;
 
         while (!this.importantRebuildQueue.isEmpty()) {
@@ -457,13 +475,6 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
             }
 
             this.dirty = true;
-            submitted++;
-        }
-
-        while (submitted < budget && !this.rebuildQueue.isEmpty()) {
-            ChunkRenderContainer<T> render = this.rebuildQueue.dequeue();
-
-            this.builder.deferRebuild(render);
             submitted++;
         }
 
@@ -483,8 +494,6 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
                 this.addEntitiesToRenderLists(render);
             }
         }
-
-        this.builder.createMoreThreads();
     }
 
     public void markDirty() {

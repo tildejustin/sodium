@@ -183,6 +183,10 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
         this.chunkRenderManager.unloadPending();
 
+        profiler.swap("chunk_update");
+
+        this.chunkRenderManager.updateChunks();
+
         if (!hasForcedFrustum && this.chunkRenderManager.isDirty()) {
             profiler.swap("chunk_graph_rebuild");
 
@@ -191,7 +195,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
         profiler.swap("chunk_update");
 
-        this.chunkRenderManager.updateChunks();
+        this.chunkRenderManager.updateImportantChunks();
 
         profiler.swap("visible_chunk_tick");
 
